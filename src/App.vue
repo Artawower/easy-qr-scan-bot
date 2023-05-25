@@ -11,20 +11,16 @@
       <h3>Functions and buttons</h3>
       -->
 
-      <!-- <div v-if="code">
-             <h3>QR code:</h3>
-             {{ code }} <br>
+      <div v-if="code">
+        <h3>QR code:</h3>
+        {{ code }} <br />
 
-             <v-btn
-             v-if="is_url"
-             size="large"
-             @click="openLink()"
-             >
-             Open Link
-             </v-btn>
-             <button @click="copyCodeClipboard()">copy to clipboard</button>
-             </div>
-        -->
+        <v-btn v-if="is_url" size="large" @click="openLink()">
+          Open Link
+        </v-btn>
+        <button @click="copyCodeClipboard()">copy to clipboard</button>
+      </div>
+      {{ codeAppeared }}
 
       <div v-if="!code" class="code-wrapper">
         <h3>Scan a QR code!</h3>
@@ -57,6 +53,7 @@ export default {
       code: null,
       is_url: false,
       url: null,
+      codeAppeared: false,
     };
   },
   created() {
@@ -75,7 +72,7 @@ export default {
 
     if (this.is_telegram_client && this.is_telegram_api_updated) {
       this.TWA.MainButton.show();
-      this.showQRScanner();
+      // this.showQRScanner();
     }
   },
   mounted() {
@@ -98,9 +95,18 @@ export default {
       this.is_url = result.is_url;
       this.url = result.value;
       this.hapticImpact();
-      this.TWA.closeScanQrPopup();
+      this.copyCodeClipboard();
 
-      //this.TWA.showAlert(data.data);
+      this.TWA.showAlert(`QR code has recognised
+and
+copied to the clipboard
+`);
+
+      this.TWA.closeScanQrPopup();
+      // setTimeout(() => {
+      //   this.TWA.closeScanQrPopup();
+      //   this.TWA.close();
+      // }, 1500);
     },
     // End of callbacks
     showQRScanner() {
@@ -113,13 +119,23 @@ export default {
       // light medium heavy rigid soft
       this.TWA.HapticFeedback.impactOccurred("heavy");
     },
-    //copyCodeClipboard() {
-    //  var Url = this.$refs.mylink;
-    //  Url.innerHTML = window.location.href;
-    //  console.log(Url.innerHTML)
-    //  Url.select();
-    //  document.execCommand("copy");
-    //}
+    copyCodeClipboard() {
+      var Url = this.$refs.mylink;
+      Url.innerHTML = window.location.href;
+      console.log(Url.innerHTML);
+      Url.select();
+      document.execCommand("copy");
+    },
+  },
+  watch: {
+    code(val) {
+      if (val) {
+        this.processQRCode();
+        this.codeAppeared = true;
+        return;
+      }
+      this.codeAppeared = false;
+    },
   },
 };
 </script>
