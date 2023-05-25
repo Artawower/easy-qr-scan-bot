@@ -11,46 +11,43 @@
       <h3>Functions and buttons</h3>
       -->
 
-      <div v-if="code">
-        <h3>QR code:</h3>
-        {{ code }} <br>
+      <!-- <div v-if="code">
+             <h3>QR code:</h3>
+             {{ code }} <br>
 
-        <v-btn
-          v-if="is_url"
-          size="large"
-          @click="openLink()"
-        >
-          Open Link
-        </v-btn>
-        <!--<button @click="copyCodeClipboard()">copy to clipboard</button>-->
-      </div>
-      <div v-if="!code">
+             <v-btn
+             v-if="is_url"
+             size="large"
+             @click="openLink()"
+             >
+             Open Link
+             </v-btn>
+             <button @click="copyCodeClipboard()">copy to clipboard</button>
+             </div>
+        -->
+
+      <div v-if="!code" class="code-wrapper">
         <h3>Scan a QR code!</h3>
+        <div class="icon"></div>
       </div>
     </div>
 
-
-
-    <div
-      v-if="!is_telegram_client"
-      class="text-center"
-    >
-      Please open the app from a Telegram client!<br>
+    <div v-if="!is_telegram_client" class="text-center">
+      Please open the app from a Telegram client!<br />
     </div>
     <div
       v-if="is_telegram_client && !is_telegram_api_updated"
       class="text-center"
     >
-      Please update Telegram to Use the app!<br>
-      Telegram API version needed 6.4 or greater.<br>
+      Please update Telegram to Use the app!<br />
+      Telegram API version needed 6.4 or greater.<br />
       Your Telegram API version: {{ TWA.version }}
     </div>
   </div>
 </template>
 
-
 <script>
-import { prepareUrl } from './helpers'
+import { prepareUrl } from "./helpers";
 
 export default {
   data() {
@@ -66,10 +63,10 @@ export default {
     // Binding function to all the event types
     //this.TWA.onEvent('themeChanged', this.themeChanged);
     this.TWA.MainButton.setText("Scan QR code");
-    this.TWA.onEvent('qrTextReceived', this.processQRCode);
-    this.TWA.onEvent('mainButtonClicked', this.mainButtonClicked);
+    this.TWA.onEvent("qrTextReceived", this.processQRCode);
+    this.TWA.onEvent("mainButtonClicked", this.mainButtonClicked);
 
-    this.is_telegram_api_updated = this.TWA.isVersionAtLeast('6.4');
+    this.is_telegram_api_updated = this.TWA.isVersionAtLeast("6.4");
     // platform not updated if version is not 6.4 or greater
 
     if (this.TWA.platform != "unknown") {
@@ -96,20 +93,20 @@ export default {
       this.TWA.openLink(this.url);
     },
     processQRCode(data) {
-       this.code = data.data;
-       const result = prepareUrl(this.code)
-       this.is_url = result.is_url;
-       this.url = result.value;
-       this.hapticImpact();
-       this.TWA.closeScanQrPopup();
+      this.code = data.data;
+      const result = prepareUrl(this.code);
+      this.is_url = result.is_url;
+      this.url = result.value;
+      this.hapticImpact();
+      this.TWA.closeScanQrPopup();
 
-       //this.TWA.showAlert(data.data);
+      //this.TWA.showAlert(data.data);
     },
     // End of callbacks
     showQRScanner() {
       const par = {
-          text: ""
-        };
+        text: "",
+      };
       this.TWA.showScanQrPopup(par);
     },
     hapticImpact() {
@@ -123,8 +120,8 @@ export default {
     //  Url.select();
     //  document.execCommand("copy");
     //}
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -146,7 +143,7 @@ h3 {
   color: var(--tg-theme-text-color, black);
 }
 button {
-  background-color: var(--tg-theme-button-color, #008CBA);
+  background-color: var(--tg-theme-button-color, #008cba);
   border: 5px;
   color: var(--tg-theme-button-text-color, black);
   padding: 15px;
@@ -155,5 +152,19 @@ button {
   text-decoration: none;
   display: inline-block;
   font-size: 15px;
+}
+
+.code-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon {
+  width: 200px;
+  height: 200px;
+  background-image: url("/dick.png");
 }
 </style>
